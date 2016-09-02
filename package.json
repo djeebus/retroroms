@@ -1,11 +1,11 @@
 {
-  "name": "electron-quick-start",
+  "name": "retroroms",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently -k 'npm run dev:frontend' 'npm run dev:backend'",
-    "dev:frontend": "ENV=development electron . --disable-gpu",
+    "dev": "concurrently -k \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "electron . --disable-gpu",
     "dev:backend": "babel-node server.js",
     "build": "webpack --config webpack.config.production.js && electron-packager . HackerNews --platform=darwin --arch=all --prune --overwrite --icon ./HN_icon"
   },

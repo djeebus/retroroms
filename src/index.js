@@ -5,8 +5,7 @@ import { Provider } from 'react-redux';
 import configureStore from './store/configureStore';
 import Settings from './components/settings';
 
-const state = JSON.parse(localStorage.getItem('state'));
-const store = configureStore(state || {});
+const store = configureStore(process.env.ENV === 'development');
 
 renderReact(
     <Provider store={store}>

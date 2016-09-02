@@ -44,41 +44,35 @@ function consolesReducer(state = consolesInitialState, action) {
     }
 }
 
-const romsInitialState = {};
-function romsReducer(state = romsInitialState, action) {
+
+const scannerInitialState = {isScanning: false};
+function scannerReducer(state = scannerInitialState, action) {
     switch (action.type) {
         case actions.BEGIN_ROMS_SCAN:
             return {
                 ...state,
-                isFetching: true,
-            };
-
-        case actions.ROM_FOUND:
-            let state = {...state};
-
-            return {
-                ...state,
+                isScanning: true,
             };
 
         case actions.END_ROMS_SCAN:
             return {
                 ...state,
-                isFetching: false,
+                isScanning: false,
             };
-    }
 
-    return state;
+        default:
+            return state;
+    }
 }
 
 const pathsInitialState = [];
 function pathsReducer(state = pathsInitialState, action) {
     switch (action.type) {
-        case actions.BEGIN_ROMS_SCAN:
+        case actions.PATH_ADDED:
             return [
                 ...state,
                 action.path,
             ];
-
 
         default:
             return state;
@@ -86,8 +80,45 @@ function pathsReducer(state = pathsInitialState, action) {
 }
 
 
+function romReducer(rom, action) {
+    switch (action.type) {
+        case actions.ROM_FOUND:
+            if (action.path !== rom.path) {
+                return rom;
+            }
+
+
+    }
+}
+
+
+const romsInitialState = [];
+function romsReducer(state = romsInitialState, action) {
+    if (state === undefined) {
+        state = romsInitialState;
+    }
+
+    switch (action.type) {
+        case actions.ROM_FOUND:
+            let existing = state.findIndex(r => r.path == action.path);
+            if (existing >= 0) {
+                return state;
+            }
+
+            return [
+                ...state,
+                {path: action.path},
+            ];
+
+        default:
+            return state.map(rom => romReducer(rom, action));
+    }
+}
+
+
 export default combineReducers({
     consoles: consolesReducer,
-    roms: romsReducer,
+    scanner: scannerReducer,
     paths: pathsReducer,
+    roms: romsReducer,
 });
