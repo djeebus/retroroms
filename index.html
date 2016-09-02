@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <div id="root">Please wait ... </div>
+    <script>
+      (function() {
+        const script = document.createElement('script');
+        script.src = process.env.ENV === 'development' ? 'http://localhost:9000/dist/bundle.js' : './dist/bundle.js';
+        document.write(script.outerHTML);
+      }());
+    </script>
+  </body>
+</html>
