@@ -1,7 +1,8 @@
+import electron from 'electron';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {scanForRoms, pathAdded, removeRom, identifyRom} from '../redux/actions';
-import electron from 'electron';
+import { play } from '../api';
 
 
 require('./settings.scss');
@@ -33,7 +34,8 @@ class Rom extends Component {
         ];
         return (
             <li key={rom.path} className={classes.join(' ')}>
-                {rom.path}&nbsp;
+                {rom.name || rom.path}&nbsp;
+                <button onClick={() => play(rom)}>Play</button>
                 <button onClick={() => this.props.onRemoveRom(rom)}>
                     Remove
                 </button>

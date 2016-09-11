@@ -8,6 +8,7 @@ import Settings from './components/settings';
 
 const store = configureStore(remote.app.devMode);
 
+
 renderReact(
     <Provider store={store}>
       <Settings/>

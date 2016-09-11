@@ -2,9 +2,10 @@ import path from 'path';
 import recursive from './lib/recursive-readdir';
 import {parseString} from 'xml2js';
 import wrapPromise from 'wrap-promise';
+import child_process from 'child_process';
+
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
-
 
 
 function readDir(path) {
@@ -89,6 +90,8 @@ export function getGameMetadata(fname) {
                 description: match.Overview[0],
 
                 theGameDbId: parseInt(match.id[0]),
+                console: theGameDbPlatformIdsToPlatforms[parseInt(match.PlatformId[0])],
+
                 coop: match['Co-op'] == 'Yes',
                 developer: match.Developer[0],
                 publisher: match.Publisher[0],
@@ -127,13 +130,18 @@ export function getGameMetadata(fname) {
 }
 
 
-const extensions = {
+const theGameDbPlatformIdsToPlatforms = {
+    '6': 'snes',
+};
+
+
+const extensionsToTheGameDbPlatforms = {
     '.smc': 'Super Nintendo (SNES)',
 };
 
 function identifyPlatform(fname) {
     let ext = path.extname(fname);
-    let platform = extensions[ext];
+    let platform = extensionsToTheGameDbPlatforms[ext];
     return platform;
 }
 
@@ -143,4 +151,19 @@ function getNameFromFname(fname) {
     let name = path.basename(fname, ext);
     name = name.replace(/\((V\d+\.\d+|U)\)|\[\!\]/g, '');
     return name.trim();
+}
+
+
+function readMameDb() {
+
+}
+
+
+export function play(rom) {
+    switch (rom.console) {
+        case 'snes':
+            console.log('launching zsnes ', rom.path);
+            child_process.exec(`zsnes "${rom.path}"`);
+            break;
+    }
 }
