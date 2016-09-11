@@ -1,12 +1,16 @@
 import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../reducers';
+import rootReducer from './reducers';
 import thunkMiddleware from 'redux-thunk';
 import debounce from 'debounce';
 
 
 function loadState() {
     const jsonState = localStorage.getItem('state');
-    return JSON.parse(jsonState);
+    let state = JSON.parse(jsonState);
+    if (!state) {
+        state = undefined;
+    }
+    return state;
 }
 
 
@@ -23,7 +27,7 @@ export default (debug) => {
     if (debug) {
         console.log('state', initialState);
     }
- 
+
     let store = createStore(
         rootReducer,
         initialState,

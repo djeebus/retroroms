@@ -1,22 +1,61 @@
-const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+import {app, BrowserWindow} from 'electron';
+import {basename} from 'path';
+
+app.devMode = process.argv.findIndex(a => a == '--dev') != -1;
+
+if (app.devMode) {
+  require('electron-debug')();
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-function createWindow () {
+
+const installExtensions = async () => {
+  if (!app.devMode) {
+    console.log('not in dev mode')
+    return;
+  }
+  const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
+
+  const extensions = [
+    'REACT_DEVELOPER_TOOLS',
+    'REDUX_DEVTOOLS'
+  ];
+  const forceDownload = true;
+  for (const name of extensions) {
+    console.log(`installing ${name} ... `);
+    try {
+      await installer.default(installer[name], forceDownload);
+      console.log(`done installing ${name} ... `);
+    } catch (e) {
+      console.error(`error installing ${name}`, e);
+    } // eslint-disable-line
+  }
+};
+
+async function createWindow () {
+  console.log('installing extensions');
+  await installExtensions();
+  console.log('extensions installed');
+
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600});
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.show();
+    mainWindow.focus();
+
+  });
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (app.devMode) {
+    mainWindow.openDevTools();
+  }
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -48,6 +87,3 @@ app.on('activate', function () {
     createWindow()
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

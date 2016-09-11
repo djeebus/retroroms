@@ -30,6 +30,7 @@ var config = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.IgnorePlugin(/vertx/),
   ]
 };
 

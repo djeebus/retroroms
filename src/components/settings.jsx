@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {scanForRoms, pathAdded} from '../../actions';
+import {scanForRoms, pathAdded, removeRom, identifyRom} from '../redux/actions';
 import electron from 'electron';
 
 
@@ -26,9 +26,12 @@ class Rom extends Component {
 
         return (
             <li key={rom.path}>
-                ${rom.name}
+                ${rom.path}&nbsp;
                 <button onClick={() => this.props.onRemoveRom(rom)}>
                     Remove
+                </button>
+                <button onClick={() => this.props.onIdentifyRom(rom)}>
+                    Identify
                 </button>
             </li>
         );
@@ -36,7 +39,8 @@ class Rom extends Component {
 }
 
 
-const Settings = ({paths, roms, onGetPath, onRescan, onRemoveRom}) => {
+const Settings = ({paths, roms, onGetPath, onRescan,
+                   onRemoveRom, onIdentifyRom}) => {
     return (
         <div>
             <h1>Paths</h1>
@@ -47,9 +51,13 @@ const Settings = ({paths, roms, onGetPath, onRescan, onRemoveRom}) => {
 
             <button onClick={onGetPath}>Open Path</button>
 
-            <h1>ROMs</h1>
+            <h1>Unidentified ROMs</h1>
             <ul>
-                {roms.map(rom => <Rom key={rom.path} rom={rom} onRemoveRom={onRemoveRom} />)}
+                {roms
+                    .filter(r => !r.console)
+                    .map(rom => <Rom key={rom.path} rom={rom}
+                                     onRemoveRom={onRemoveRom}
+                                     onIdentifyRom={onIdentifyRom} />)}
             </ul>
         </div>
     );
@@ -88,6 +96,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onRemoveRom: (rom) => {
             dispatch(removeRom(rom))
+        },
+        onIdentifyRom: (rom) => {
+            dispatch(identifyRom(rom))
         },
     }
 };

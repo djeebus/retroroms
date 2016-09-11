@@ -1,28 +1,28 @@
 import {combineReducers} from 'redux';
-import * as actions from '../actions';
+import * as actions from './actions';
 
 
 /* --- state ---
 
-{
-    paths: [
-        {
-            path: /roms/,
-        },
-    ],
-    roms: [
-        {
-            console: 'snes',
-            path: '/roms/snes/tetris.smc',
-        },
-    ],
-    consoles: [
-        {
-            console: 'snes',
-            executable: '',
-        }
-    ]
-}
+ {
+ paths: [
+ {
+ path: /roms/,
+ },
+ ],
+ roms: [
+ {
+ console: 'snes',
+ path: '/roms/snes/tetris.smc',
+ },
+ ],
+ consoles: [
+ {
+ console: 'snes',
+ executable: '',
+ }
+ ]
+ }
 
 
  */
@@ -83,11 +83,37 @@ function pathsReducer(state = pathsInitialState, action) {
 function romReducer(rom, action) {
     switch (action.type) {
         case actions.ROM_FOUND:
-            if (action.path !== rom.path) {
+            return {
+                path: action.path,
+            };
+
+        case actions.ROM_REMOVED:
+            if (rom.path == action.path) {
+                return null;
+            }
+
+            return rom;
+
+        case actions.IDENTIFY_ROM:
+            if (rom.path != action.path) {
                 return rom;
             }
 
+            return rom;
 
+        case actions.ROM_UPDATED:
+            if (rom.path != action.rom.path) {
+                return rom;
+            }
+
+            if (action.console) {
+                console.log('console updated: ', action.console);
+                rom.console = action.console;
+            }
+            return rom;
+
+        default:
+            return rom;
     }
 }
 
@@ -107,11 +133,11 @@ function romsReducer(state = romsInitialState, action) {
 
             return [
                 ...state,
-                {path: action.path},
+                romReducer(undefined, action),
             ];
 
         default:
-            return state.map(rom => romReducer(rom, action));
+            return state.map(rom => romReducer(rom, action)).filter(r => r != null);
     }
 }
 

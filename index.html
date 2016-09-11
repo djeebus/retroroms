@@ -8,8 +8,14 @@
     <div id="root">Please wait ... </div>
     <script>
       (function() {
+        var electron = require('electron');
+        const dev = electron.remote.app.devMode;
         const script = document.createElement('script');
-        script.src = process.env.ENV === 'development' ? 'http://localhost:9000/dist/bundle.js' : './dist/bundle.js';
+        if (dev) {
+          script.src = 'http://localhost:9000/dist/bundle.js';
+        } else {
+          script.src = './dist/bundle.js';
+        }
         document.write(script.outerHTML);
       }());
     </script>
