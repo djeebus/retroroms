@@ -4,6 +4,9 @@ import {scanForRoms, pathAdded, removeRom, identifyRom} from '../redux/actions';
 import electron from 'electron';
 
 
+require('./settings.scss');
+
+
 class Path extends Component {
     render() {
         let path = this.props.path;
@@ -24,14 +27,18 @@ class Rom extends Component {
     render() {
         let rom = this.props.rom;
 
+        let classes = [
+            'rom',
+            rom.isIdentified ? 'identified' : 'unidentified',
+        ];
         return (
-            <li key={rom.path}>
-                ${rom.path}&nbsp;
+            <li key={rom.path} className={classes.join(' ')}>
+                {rom.path}&nbsp;
                 <button onClick={() => this.props.onRemoveRom(rom)}>
                     Remove
                 </button>
                 <button onClick={() => this.props.onIdentifyRom(rom)}>
-                    Identify
+                    Refresh Metadata
                 </button>
             </li>
         );
@@ -39,10 +46,13 @@ class Rom extends Component {
 }
 
 
-const Settings = ({paths, roms, onGetPath, onRescan,
+const Settings = ({paths, romsByConsole, onGetPath, onRescan,
                    onRemoveRom, onIdentifyRom}) => {
+    let consoleKeys = Object.keys(romsByConsole);
+    consoleKeys.sort();
+
     return (
-        <div>
+        <div id="settings">
             <h1>Paths</h1>
             <ul>
                 {paths.map(path => <Path key={path} path={path}
@@ -51,21 +61,37 @@ const Settings = ({paths, roms, onGetPath, onRescan,
 
             <button onClick={onGetPath}>Open Path</button>
 
-            <h1>Unidentified ROMs</h1>
-            <ul>
-                {roms
-                    .filter(r => !r.console)
-                    .map(rom => <Rom key={rom.path} rom={rom}
+            {consoleKeys.map(c => {
+                let roms = romsByConsole[c];
+
+                return (
+                    <div key={c}>
+                        <h1>{c ? c : "Unidentified ROMs"}</h1>
+                        <ul>
+                            {roms.map(rom =>
+                                <Rom key={rom.path} rom={rom}
                                      onRemoveRom={onRemoveRom}
                                      onIdentifyRom={onIdentifyRom} />)}
-            </ul>
+                        </ul>
+                    </div>);
+            })}
+
         </div>
     );
 };
 
 
 const mapStateToProps = ({paths, roms}) => {
-    return {paths, roms};
+    let romsByConsole = {};
+    roms.forEach(r => {
+        if (r.console in romsByConsole) {
+            romsByConsole[r.console].push(r);
+        } else {
+            romsByConsole[r.console] = [r];
+        }
+    });
+
+    return {paths, romsByConsole};
 };
 
 

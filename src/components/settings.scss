@@ -1,0 +1,10 @@
+#settings {
+    .rom {
+        &.unidentified {
+            background-color: lightcoral;
+        }
+        &.identified {
+            background-color: lightgreen;
+        }
+    }
+}

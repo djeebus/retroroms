@@ -1,4 +1,3 @@
-import path from 'path';
 import * as api from '../api';
 
 export const BEGIN_ROMS_SCAN = 'BEGIN_ROMS_SCAN';
@@ -43,7 +42,8 @@ export function removeRom(rom) {
 
 
 export const IDENTIFYING_ROM = 'IDENTIFYING_ROM';
-export const ROM_UPDATED = 'ROM_UDPATED';
+export const ROM_IDENTIFIED = 'ROM_IDENTIFIED';
+export const ROM_UNIDENTIFIED = 'ROM_UNIDENTIFIED';
 export function identifyRom(rom) {
     return function (dispatch) {
         dispatch({
@@ -51,14 +51,19 @@ export function identifyRom(rom) {
             rom: rom,
         });
 
-        let ext = path.extname(rom.path);
-        console.log('extension: ', ext);
-        if (ext == '.smc') {
-            dispatch({
-                type: ROM_UPDATED,
-                rom: rom,
-                console: 'snes',
+        api.getGameMetadata(rom.path)
+            .then(result => {
+                dispatch({
+                    type: ROM_IDENTIFIED,
+                    rom: rom,
+                    result: result,
+                })
+            })
+            .catch(err => {
+                dispatch({
+                    type: ROM_UNIDENTIFIED,
+                    rom: rom,
+                })
             });
-        }
     };
 }

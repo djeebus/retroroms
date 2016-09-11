@@ -38,9 +38,12 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
     "electron-prebuilt": "^0.36.0",
+    "es6-promise": "latest",
+    "isomorphic-fetch": "latest",
     "menubar": "^4.1.0",
     "react-redux": "^4.4.5",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "babel-loader": "^6.2.4",
@@ -51,16 +54,19 @@
     "electron-packager": "^6.0.0",
     "express": "^4.13.4",
     "file-loader": "^0.8.5",
+    "json-loader": "^0.5.4",
     "moment": "^2.12.0",
+    "node-sass": "^3.9.3",
     "postcss-loader": "^0.8.2",
-    "react-dom": "^0.14.8",
     "react": "^0.14.8",
-    "redux-saga": "^0.9.5",
+    "react-dom": "^0.14.8",
     "redux": "^3.3.1",
+    "redux-saga": "^0.9.5",
+    "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
+    "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.10.0",
-    "webpack-target-electron-renderer": "^0.4.0",
-    "webpack": "^1.12.14"
+    "webpack-target-electron-renderer": "^0.4.0"
   }
 }

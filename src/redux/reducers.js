@@ -94,23 +94,27 @@ function romReducer(rom, action) {
 
             return rom;
 
-        case actions.IDENTIFY_ROM:
-            if (rom.path != action.path) {
-                return rom;
-            }
-
-            return rom;
-
-        case actions.ROM_UPDATED:
+        case actions.ROM_IDENTIFIED:
             if (rom.path != action.rom.path) {
                 return rom;
             }
 
-            if (action.console) {
-                console.log('console updated: ', action.console);
-                rom.console = action.console;
+
+            return {
+                ...rom,
+                ...action.result,
+                isIdentified: true,
+            };
+
+        case actions.ROM_UNIDENTIFIED:
+            if (rom.path != action.rom.path) {
+                return rom;
             }
-            return rom;
+
+            return {
+                ...rom,
+                isIdentified: false,
+            };
 
         default:
             return rom;
