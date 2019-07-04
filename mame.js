@@ -10,7 +10,7 @@ const ignoredElements = new Set([
     'ramoption', 'disk', 'adjuster',
 ]);
 
-export default function parseMameContent(callback) {
+export default function parseMameContent(onMachineFound, onComplete) {
     console.log('starting -> ');
 
     let machine, current;
@@ -30,7 +30,8 @@ export default function parseMameContent(callback) {
                     console.log(`mame v${attrs.build}`);
                     break;
 
-                case 'machine':
+                case 'game':    // v0.160 ...
+                case 'machine': // v0.175 ...
                     machine = attrs;
                     break;
 
@@ -79,11 +80,12 @@ export default function parseMameContent(callback) {
         .on('endElement', function (name) {
             switch (name) {
                 case 'mame':
-                    console.log('done parsing mame xml file');
+                    onComplete();
                     break;
 
-                case 'machine':
-                    callback(machine);
+                case 'game':    // v0.160 ...
+                case 'machine': // v0.175 ...
+                    onMachineFound(machine);
                     machine = null;
                     break;
             }

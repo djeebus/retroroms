@@ -17,10 +17,13 @@ let mainWindow;
 
 const installExtensions = async () => {
   if (!app.devMode) {
-    console.log('not in dev mode')
+    console.log('not in dev mode');
     return;
   }
+
+  console.log('importing installer');
   const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
+  console.log('installer imported');
 
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
@@ -84,9 +87,16 @@ app.on('ready', async function () {
     });
 
     machineCount++;
-    if (machineCount % 100 == 0) {
+    if (machineCount % 1000 == 0) {
       console.log('machines: ', machineCount);
     }
+  }, function () {
+    console.log('sending message');
+    mainWindow.webContents.send(
+        'synchromous-message',
+        {'type': 'MAME_PARSE_COMPLETE'},
+    );
+    console.log('message sent');
   });
 });
 
